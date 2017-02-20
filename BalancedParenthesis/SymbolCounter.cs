@@ -6,29 +6,27 @@ using System.Threading.Tasks;
 
 namespace BalancedParenthesis
 {
-
-
     public class SymbolCounter
     {
-        int Brackets, CurlyBrackets, SquareBrackets;
+        internal int Brackets { get; set; }
+        internal int CurlyBrackets { get; set; }
+        internal int SquareBrackets { get; set; }
 
-
-        Stack<char> symbols;
+        private Stack<char> symbols { get; set; }
 
         public SymbolCounter()
         {
             Brackets = 0;
             CurlyBrackets = 0;
             SquareBrackets = 0;
-            Stack<char> symbols = new Stack<char>();
+            symbols = new Stack<char>();
         }
 
-        public SymbolsStats ProcessOpeningSymbol(char c)
+        public void ProcessOpeningSymbol(char c)
         {
             symbols.Push(c);
             switch (c)
             {
-
                 case '(':
                     Brackets++;
                     break;
@@ -39,30 +37,18 @@ namespace BalancedParenthesis
                     SquareBrackets++;
                     break;
             }
-
-            SymbolsStats result = new SymbolsStats()
-            {
-                countOfBrackets = Brackets,
-                countOfCurlyBrackets = CurlyBrackets,
-                countOfSquareBrackets = SquareBrackets
-            };
-
-            return result;
-            //var tuple = new Tuple<int, int, int>(Brackets, CurlyBrackets, SquareBrackets);
-
-            //return tuple;
-
         }
 
-        public SymbolsStats ProcessClosingSymbol(char c)
+        public bool ProcessClosingSymbol(char c)
         {
             bool balanced = true;
-            if (symbols.Count == 0)
-                 balanced = false;
-            char CurrentSymbol = symbols.Pop();
 
+            if (symbols.Count == 0)
+                return false;
+
+            char CurrentSymbol = symbols.Pop();
             if (!MatchingSymbol(CurrentSymbol, c))
-                balanced = false;
+                return false;
 
             switch (c)
             {
@@ -77,17 +63,7 @@ namespace BalancedParenthesis
                     break;
             }
 
-
-            SymbolsStats result = new SymbolsStats()
-            {
-                countOfBrackets = Brackets,
-                countOfCurlyBrackets = CurlyBrackets,
-                countOfSquareBrackets = SquareBrackets,
-                unbalanced = !balanced
-
-            };
-
-            return result;
+            return balanced;
         }
 
         private static bool MatchingSymbol(char symbol, char c)
